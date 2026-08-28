@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXPIDRA | Smarter content. Strong systems.</title>
+  <meta name="description" content="Content, automation, ads, websites, and workflow systems for businesses built to scale." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://code.jquery.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body class="bootstrap-responsive tw:min-h-dvh tw:overflow-x-clip" data-theme="dark">
+  <a class="skip-link" href="#services">Skip to main content</a>
+
+  <!-- ============ LOADER ============ -->
+  <div class="loader" id="loader">
+    <div class="loader-x">
+      <span class="loader-bar b1"></span>
+      <span class="loader-bar b2"></span>
+    </div>
+    <div class="loader-word">EXPIDRA</div>
+    <div class="loader-sub">Expidra</div>
+    <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+  </div>
+
+  <!-- ============ CUSTOM CURSOR — the Expidra X core in miniature ============ -->
+  <div class="cursor-core" id="cursorCore"><span class="cursor-x"></span></div>
+  <div class="cursor-orbit" id="cursorOrbit">
+    <span class="orbit-ring"></span>
+    <i class="orbit-node"></i>
+    <i class="orbit-node n2"></i>
+  </div>
+  <div class="route-curtain" id="routeCurtain" aria-hidden="true"></div>
+
+  <!-- ============ 3D CANVAS ============ -->
+  <canvas id="world" role="img" aria-label="An abstract three-dimensional Expidra system that evolves as the page scrolls."></canvas>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav container-fluid" id="nav">
+    <a class="nav-brand" href="#" data-magnetic data-goto="0">
+      <img src="/media/expidra-logo.png" alt="Expidra" class="nav-logo" />
+    </a>
+    <nav class="nav-menu" aria-label="Sections">
+      <a href="#services" data-goto="0.27" data-chapter="services">Services</a>
+      <a href="#showreel" data-goto="0.38" data-chapter="story">Showreel</a>
+      <a href="#process" data-goto="0.48" data-chapter="process">Process</a>
+      <a href="#team" data-goto="0.555" data-chapter="team">Team</a>
+      <a href="#project-brief" data-goto="0.865" data-chapter="together">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <div class="audio-control">
+        <button class="chip-btn" id="soundToggle" data-magnetic aria-label="Turn sound on" aria-pressed="false">
+          <span class="snd-bars"><i></i><i></i><i></i><i></i></span>
+          <span class="snd-label">Sound off</span>
+        </button>
+        <button class="audio-mixer-toggle" id="audioMixerToggle" type="button" aria-label="Open audio mixer" aria-expanded="false" aria-controls="audioMixer">
+          <span data-fa="sliders" aria-hidden="true"></span>
+        </button>
+        <section class="audio-mixer" id="audioMixer" aria-label="Audio mixer" hidden>
+          <div class="audio-mixer-head">
+            <div><span class="mixer-icon" data-fa="volume" aria-hidden="true"></span><strong>Sound mix</strong></div>
+            <span class="audio-state" id="audioState">Off</span>
+          </div>
+          <div class="audio-channel">
+            <button class="audio-channel-toggle" id="musicChannel" type="button" aria-pressed="true">
+              <span data-fa="music" aria-hidden="true"></span><span>Music</span><i></i>
+            </button>
+            <label for="musicVolume"><span>Theme level</span><output id="musicVolumeValue">28%</output></label>
+            <input id="musicVolume" type="range" min="0" max="100" value="28" aria-label="Background music volume" />
+          </div>
+          <div class="audio-channel">
+            <button class="audio-channel-toggle" id="tapChannel" type="button" aria-pressed="true">
+              <span data-fa="tap" aria-hidden="true"></span><span>Tap sounds</span><i></i>
+            </button>
+            <label for="tapVolume"><span>Interface level</span><output id="tapVolumeValue">42%</output></label>
+            <input id="tapVolume" type="range" min="0" max="100" value="42" aria-label="Interface sound volume" />
+          </div>
+          <p>Choose music, tap sounds, or keep both active.</p>
+        </section>
+      </div>
+      <a class="nav-cta" href="#project-brief" data-magnetic data-goto="0.865">Start a project</a>
+    </div>
+  </header>
+
+  <audio id="themeMusic" src="/media/theme.mp3" loop preload="metadata" aria-hidden="true"></audio>
+
+  <div class="scroll-hint" id="scrollHint">
+    <span class="hint-mouse"><span class="hint-wheel"></span></span>
+    <span>Scroll to travel inward</span>
+  </div>
+
+  <nav class="depth-rail" aria-label="Page sections">
+    <a class="depth-limit depth-limit-up" href="#" data-goto="0" aria-label="Go to the first section">
+      <span data-fa="chevronUp" aria-hidden="true"></span>
+    </a>
+    <div class="depth-track" id="depthTrack" role="slider" tabindex="0"
+      aria-label="Scroll through page sections" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <span class="depth-fill" id="depthFill"></span>
+    </div>
+    <div class="depth-stops">
+      <div class="depth-stop"><span>Enter</span><a class="depth-dot" href="#" data-goto="0" aria-label="Go to Home"></a></div>
+      <div class="depth-stop"><span>Why Expidra</span><a class="depth-dot" href="#positioning" data-goto="0.15" aria-label="Go to Why Expidra"></a></div>
+      <div class="depth-stop"><span>Services</span><a class="depth-dot" href="#services" data-goto="0.27" aria-label="Go to Services"></a></div>
+      <div class="depth-stop"><span>Showreel</span><a class="depth-dot" href="#showreel" data-goto="0.38" aria-label="Go to Showreel"></a></div>
+      <div class="depth-stop"><span>Growth map</span><a class="depth-dot" href="#process" data-goto="0.48" aria-label="Go to Growth Map"></a></div>
+      <div class="depth-stop"><span>Team</span><a class="depth-dot" href="#team" data-goto="0.555" aria-label="Go to Team"></a></div>
+      <div class="depth-stop"><span>Partners</span><a class="depth-dot" href="#partners" data-goto="0.69" aria-label="Go to Partners"></a></div>
+      <div class="depth-stop"><span>Values</span><a class="depth-dot" href="#why" data-goto="0.785" aria-label="Go to Values"></a></div>
+      <div class="depth-stop"><span>Work together</span><a class="depth-dot" href="#project-brief" data-goto="0.865" aria-label="Go to Project Brief"></a></div>
+      <div class="depth-stop"><span>Let’s Build</span><a class="depth-dot" href="#contact" data-goto="0.96" aria-label="Go to Let’s Build"></a></div>
+    </div>
+    <a class="depth-limit depth-limit-down" href="#contact" data-goto="0.96" aria-label="Go to the final section">
+      <span data-fa="chevronDown" aria-hidden="true"></span>
+    </a>
+  </nav>
+
+  <!-- ============ FIXED STAGE (sections revealed through depth) ============ -->
+  <main class="stage container-fluid p-0" id="stage">
+
+    <!-- 1 · HERO -->
+    <section class="scene scene-hero" id="home" data-scene="hero">
+      <div class="scene-inner">
+        <p class="kicker float-tag"><span class="pulse-dot"></span> Strategy · Creative · Technology</p>
+        <h1 class="hero-title" id="heroTitle" aria-label="EXPIDRA">
+          <img src="/media/expidra-logo.png" alt="EXPIDRA" class="hero-logo" draggable="false" />
+        </h1>
+        <p class="hero-sub">Smarter content. <em>Strong systems.</em></p>
+        <p class="hero-copy">Strategy, content, film, and automation shaped by people<br class="br-d" /> and built around measurable growth.</p>
+        <div class="btn-row">
+          <a href="#project-brief" class="btn btn-primary" data-magnetic data-goto="0.845"><span>Start a project</span><i class="btn-glow"></i></a>
+          <a href="#services" class="btn btn-ghost" data-magnetic data-goto="0.26"><span>Explore Services</span></a>
+        </div>
+        <div class="hero-tags">
+          <span class="pill" style="--d:.1s">Generate</span>
+          <span class="pill" style="--d:.25s">Visualize</span>
+          <span class="pill" style="--d:.4s">Cinematize</span>
+          <span class="pill" style="--d:.55s">Scale</span>
+        </div>
+      </div>
+      <div class="hero-infos" aria-label="Live Expidra studio signals">
+        <article class="hcard hc1">
+          <span class="hcard-k"><i data-fa="chart"></i><span class="live-dot"></span>Qualified leads</span>
+          <strong class="hcard-n" id="hcLeads">0</strong>
+          <svg class="spark" viewBox="0 0 120 34" aria-label="Lead activity trend"><polyline id="hcSpark" points="0,26 15,22 30,24 45,18 60,20 75,14 90,16 105,10 120,12"></polyline></svg>
+          <span class="hcard-sub">Live pipeline signal</span>
+        </article>
+        <article class="hcard hc2">
+          <span class="hcard-k"><i data-fa="bolt"></i><span class="live-dot"></span>Automation uptime</span>
+          <strong class="hcard-n" id="hcAuto">0%</strong>
+          <div class="hcard-bar" aria-hidden="true"><i id="hcBar" style="width:0%"></i></div>
+          <span class="hcard-sub">Systems running now</span>
+        </article>
+        <article class="hcard hc3">
+          <span class="hcard-k"><i data-fa="bullhorn"></i><span class="live-dot"></span>Campaigns live</span>
+          <strong class="hcard-n" id="hcCamp">0</strong>
+          <span class="hcard-sub">Creative and media</span>
+        </article>
+        <article class="hcard hcr2">
+          <span class="hcard-k"><i data-fa="clapper"></i><span class="live-dot"></span>Content shipped</span>
+          <strong class="hcard-n" id="hcContent">0</strong>
+          <span class="hcard-sub">Current production cycle</span>
+        </article>
+      </div>
+      <video class="scene-video hero-video" id="heroVideo" data-src="/media/clip-hero.mp4" muted loop playsinline></video>
+      <div class="hero-vignette" aria-hidden="true"></div>
+    </section>
+
+    <!-- 2 · POSITIONING -->
+    <section class="scene scene-positioning" id="positioning" data-scene="positioning">
+      <div class="scene-inner narrow">
+        <p class="kicker">Why Expidra</p>
+        <h2 class="h2">We connect creative work<br /><span class="grad">to the way your business actually grows.</span></h2>
+        <p class="lead">Expidra brings strategy, production, media, web, and automation into one accountable team. Good ideas move from brief to market without getting lost between suppliers.</p>
+        <div class="stat-row" aria-label="Expidra operating model">
+          <article class="stat">
+            <span class="stat-icon" data-fa="layers" aria-hidden="true"></span>
+            <div class="stat-copy">
+              <div class="stat-line"><strong class="stat-num" data-count="6">0</strong><span class="stat-title">capabilities</span></div>
+              <p class="stat-label">Connected around one brief.</p>
+            </div>
+          </article>
+          <article class="stat">
+            <span class="stat-icon" data-fa="people" aria-hidden="true"></span>
+            <div class="stat-copy">
+              <div class="stat-line"><strong class="stat-num" data-count="1">0</strong><span class="stat-title">accountable team</span></div>
+              <p class="stat-label">One owner from start to finish.</p>
+            </div>
+          </article>
+          <article class="stat">
+            <span class="stat-icon" data-fa="route" aria-hidden="true"></span>
+            <div class="stat-copy">
+              <div class="stat-line"><strong class="stat-num" data-count="5">0</strong><span class="stat-title">delivery stages</span></div>
+              <p class="stat-label">A clear route from brief to growth.</p>
+            </div>
+          </article>
+        </div>
+        <figure class="glass-strip why-media" aria-label="The Expidra team planning a creative project together">
+          <div class="why-media-frame">
+            <img
+              class="why-media-image"
+              src="/media/why-expidra-team.webp"
+              alt="Four Expidra team members planning a creative project around a studio table"
+              width="1672"
+              height="941"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="why-media-gloss" aria-hidden="true"></span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 3 · SERVICES -->
+    <section class="scene scene-services" id="services" data-scene="services">
+      <div class="scene-inner wide">
+        <p class="kicker">What Expidra builds</p>
+        <h2 class="h2">Six specialist capabilities.<br /><span class="grad">One accountable team.</span></h2>
+        <div class="services-orbit" id="servicesOrbit">
+          <a class="svc" href="/services/social-media-content-systems.html" aria-label="View Social Media and Content Systems">
+            <div class="svc-head"><span class="svc-num">01</span><span class="svc-icon" data-fa="social" aria-hidden="true"></span></div>
+            <h3>Social Media &amp; Content Systems</h3>
+            <p>Channel strategy, campaign concepts, reels, posts, and a production rhythm your team can sustain.</p>
+            <div class="svc-tags"><span class="pill">Create</span><span class="pill">Scale</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+          <a class="svc" href="/services/paid-ads-growth.html" aria-label="View Paid Ads and Growth">
+            <div class="svc-head"><span class="svc-num">02</span><span class="svc-icon" data-fa="target" aria-hidden="true"></span></div>
+            <h3>Paid Ads &amp; Growth</h3>
+            <p>Meta ads, TikTok ads, funnel strategy, retargeting, campaign optimization, and reporting.</p>
+            <div class="svc-tags"><span class="pill">Convert</span><span class="pill">Retarget</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+          <a class="svc" href="/services/websites-landing-pages.html" aria-label="View Websites and Landing Pages">
+            <div class="svc-head"><span class="svc-num">03</span><span class="svc-icon" data-fa="browser" aria-hidden="true"></span></div>
+            <h3>Websites &amp; Landing Pages</h3>
+            <p>Fast, focused websites, conversion pages, connected forms, and dashboards built around real user journeys.</p>
+            <div class="svc-tags"><span class="pill">Launch</span><span class="pill">Convert</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+          <a class="svc" href="/services/high-end-commercials.html" aria-label="View High End Commercials">
+            <div class="svc-head"><span class="svc-num">04</span><span class="svc-icon" data-fa="film" aria-hidden="true"></span></div>
+            <h3>High End Commercials</h3>
+            <p>Brand films, product spots, campaign assets, and cinematic visual direction from concept to final delivery.</p>
+            <div class="svc-tags"><span class="pill">Create</span><span class="pill">Launch</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+          <a class="svc" href="/services/ai-agents-automation.html" aria-label="View AI Agents and Automation">
+            <div class="svc-head"><span class="svc-num">05</span><span class="svc-icon" data-fa="robot" aria-hidden="true"></span></div>
+            <h3>AI Agents &amp; Automation</h3>
+            <p>Practical automations for lead handling, customer support, CRM workflows, and repetitive operational work.</p>
+            <div class="svc-tags"><span class="pill">Automate</span><span class="pill">Connect</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+          <a class="svc" href="/services/youtube-automation.html" aria-label="View YouTube Automation">
+            <div class="svc-head"><span class="svc-num">06</span><span class="svc-icon" data-fa="youtube" aria-hidden="true"></span></div>
+            <h3>YouTube Automation</h3>
+            <p>Channel strategy, scripting, packaging, editing, and publishing workflows built for consistent output.</p>
+            <div class="svc-tags"><span class="pill">Create</span><span class="pill">Optimize</span></div>
+            <span class="svc-action" aria-hidden="true"><span class="svc-action-icon" data-fa="external"></span><span class="svc-action-label">View service</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · SHOWREEL -->
+    <section class="scene scene-story" id="showreel" data-scene="story">
+      <div class="scene-inner wide">
+        <div class="story-heading">
+          <p class="kicker">Selected motion</p>
+          <h2 class="h2">Showreel <span class="grad">coming soon.</span></h2>
+        </div>
+        <div class="story-stage story-stage-empty">
+          <div class="story-frame media-placeholder" aria-label="Showreel coming soon">
+            <div class="placeholder-core" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · PROCESS / HOW WE GROW A BRAND -->
+    <section class="scene scene-process" id="process" data-scene="process">
+      <div class="scene-inner wide">
+        <p class="kicker">How we work</p>
+        <h2 class="h2">From brief to <span class="grad">measurable growth.</span></h2>
+        <div class="roadmap" id="roadmap">
+          <svg class="roadmap-svg" viewBox="0 0 1000 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <title>Expidra's five-step growth process</title>
+            <defs>
+              <linearGradient id="rmGrad" x1="0" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e24bbf" />
+                <stop offset="0.5" stop-color="#7b4fdf" />
+                <stop offset="1" stop-color="#22c8f5" />
+              </linearGradient>
+            </defs>
+            <path class="rm-base" d="M 20 340 C 40 322, 52 312, 70 300 C 160 205, 210 120, 300 120 C 390 120, 440 290, 530 290 C 620 290, 670 110, 760 110 C 850 110, 905 205, 940 250 C 958 268, 976 240, 986 214" />
+            <path class="rm-glow" id="rmPath" pathLength="100" d="M 20 340 C 40 322, 52 312, 70 300 C 160 205, 210 120, 300 120 C 390 120, 440 290, 530 290 C 620 290, 670 110, 760 110 C 850 110, 905 205, 940 250 C 958 268, 976 240, 986 214" />
+            <circle class="rm-start" cx="20" cy="340" r="5" />
+            <path class="rm-arrow" d="M 992 204 L 972 212 L 983 226 Z" />
+
+            <g class="rm-node c1" data-step="0" transform="translate(70,300)" tabindex="0">
+              <g class="rm-sats">
+                <circle cx="36" cy="0" r="3" /><circle cx="-28" cy="12" r="2.2" /><circle cx="8" cy="-34" r="2.6" />
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="9s" repeatCount="indefinite" />
+              </g>
+              <circle class="rm-ring" r="27" />
+              <circle class="rm-core" r="17" />
+              <text class="rm-num" y="4">01</text>
+              <text class="rm-label" y="52">Listen</text>
+              <text class="rm-sub" y="70">define the brief</text>
+            </g>
+            <g class="rm-node c2" data-step="1" transform="translate(300,120)" tabindex="0">
+              <g class="rm-sats">
+                <circle cx="34" cy="6" r="2.6" /><circle cx="-30" cy="-8" r="2.2" /><circle cx="-6" cy="34" r="3" />
+                <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="11s" repeatCount="indefinite" />
+              </g>
+              <circle class="rm-ring" r="27" />
+              <circle class="rm-core" r="17" />
+              <text class="rm-num" y="4">02</text>
+              <text class="rm-label" y="-38">Analyze</text>
+              <text class="rm-sub" y="-65">find the leverage</text>
+            </g>
+            <g class="rm-node c3" data-step="2" transform="translate(530,290)" tabindex="0">
+              <g class="rm-sats">
+                <circle cx="38" cy="-4" r="2.4" /><circle cx="-32" cy="10" r="3" /><circle cx="4" cy="-36" r="2.2" />
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite" />
+              </g>
+              <circle class="rm-ring" r="27" />
+              <circle class="rm-core" r="17" />
+              <text class="rm-num" y="4">03</text>
+              <text class="rm-label" y="52">Design</text>
+              <text class="rm-sub" y="70">shape the approach</text>
+            </g>
+            <g class="rm-node c1" data-step="3" transform="translate(760,110)" tabindex="0">
+              <g class="rm-sats">
+                <circle cx="35" cy="8" r="2.8" /><circle cx="-33" cy="-6" r="2.3" /><circle cx="10" cy="35" r="2.6" />
+                <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="9.5s" repeatCount="indefinite" />
+              </g>
+              <circle class="rm-ring" r="27" />
+              <circle class="rm-core" r="17" />
+              <text class="rm-num" y="4">04</text>
+              <text class="rm-label" y="-38">Build</text>
+              <text class="rm-sub" y="-65">launch with care</text>
+            </g>
+            <g class="rm-node c2" data-step="4" transform="translate(940,250)" tabindex="0">
+              <g class="rm-sats">
+                <circle cx="37" cy="2" r="2.6" /><circle cx="-29" cy="14" r="2.4" /><circle cx="2" cy="-35" r="3" />
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8.5s" repeatCount="indefinite" />
+              </g>
+              <circle class="rm-ring" r="27" />
+              <circle class="rm-core" r="17" />
+              <text class="rm-num" y="4">05</text>
+              <text class="rm-label" y="52">Grow</text>
+              <text class="rm-sub" y="70">learn and refine</text>
+            </g>
+          </svg>
+          <p class="rm-caption" id="rmCaption">A clear process, with room for judgment at every step.</p>
+        </div>
+        <ol class="process-mobile" aria-label="Expidra growth process">
+          <li><span>01</span><div><strong>Listen</strong><small>Understand the business, audience, and decision that matters.</small></div></li>
+          <li><span>02</span><div><strong>Analyze</strong><small>Find the friction, evidence, and strongest opportunity.</small></div></li>
+          <li><span>03</span><div><strong>Design</strong><small>Shape the creative direction, experience, and delivery plan.</small></div></li>
+          <li><span>04</span><div><strong>Build</strong><small>Produce, connect, test, and launch with clear ownership.</small></div></li>
+          <li><span>05</span><div><strong>Grow</strong><small>Measure outcomes, learn quickly, and improve what works.</small></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6 · TEAM -->
+    <section class="scene scene-team" id="team" data-scene="team">
+      <div class="scene-inner wide">
+        <p class="kicker">The team</p>
+        <h2 class="h2">Meet <span class="grad">our team.</span></h2>
+        <p class="lead">The people responsible for the thinking, the craft, and the delivery.</p>
+        <div class="team-facts team-facts-featured" aria-label="Featured Expidra team roles">
+          <article class="team-fact"><span class="fact-icon" data-fa="people"></span><div><strong>04 core roles</strong><small>One working group.</small></div></article>
+          <article class="team-fact"><span class="fact-icon" data-fa="check"></span><div><strong>Direct ownership</strong><small>Clear decisions and updates.</small></div></article>
+          <article class="team-fact"><span class="fact-icon" data-fa="spark"></span><div><strong>Shared standard</strong><small>Strategy and craft together.</small></div></article>
+        </div>
+        <div class="playdeck team-playdeck" id="playdeck" aria-label="Featured team portraits">
+          <article class="pcard pcard-profile callout-top-left" style="--pc:#e24bbf" data-card="0" data-team-sound="team-ceo" aria-label="Muhammad Anas Uddin Siddique, CEO">
+            <span class="team-connector" aria-hidden="true"></span>
+            <div class="pcard-video">
+              <img src="/media/team/ceo-muhammad-anas-uddin-siddique.png" alt="Muhammad Anas Uddin Siddique, CEO of Expidra" width="1122" height="1402" loading="lazy" decoding="async" />
+            </div>
+            <div class="team-callout">
+              <span class="callout-icon" data-fa="bullseye" aria-hidden="true"></span>
+              <div><p class="pcard-role">CEO</p><h3 class="pcard-name">Anas Uddin</h3></div>
+            </div>
+          </article>
+
+          <article class="pcard pcard-profile callout-bottom-left" style="--pc:#8b5cf6" data-card="1" data-team-sound="team-director" aria-label="Muhammad Anas Ali, Managing Director">
+            <span class="team-connector" aria-hidden="true"></span>
+            <div class="pcard-video">
+              <img src="/media/team/managing-director-muhammad-anas-ali.png" alt="Muhammad Anas Ali, Managing Director of Expidra" width="1122" height="1402" loading="lazy" decoding="async" />
+            </div>
+            <div class="team-callout">
+              <span class="callout-icon" data-fa="route" aria-hidden="true"></span>
+              <div><p class="pcard-role">Managing Director</p><h3 class="pcard-name">Anas Ali</h3></div>
+            </div>
+          </article>
+
+          <article class="pcard pcard-profile callout-bottom-right" style="--pc:#596ee8" data-card="2" data-team-sound="team-creative" aria-label="Hashir Mustafa, Creative Head">
+            <span class="team-connector" aria-hidden="true"></span>
+            <div class="pcard-video">
+              <img src="/media/team/creative-head-hashir-mustafa.png" alt="Hashir Mustafa, Creative Head of Expidra" width="1122" height="1402" loading="lazy" decoding="async" />
+            </div>
+            <div class="team-callout">
+              <span class="callout-icon" data-fa="palette" aria-hidden="true"></span>
+              <div><p class="pcard-role">Creative Head</p><h3 class="pcard-name">Hashir Mustafa</h3></div>
+            </div>
+          </article>
+
+          <article class="pcard pcard-profile callout-top-right" style="--pc:#22c8f5" data-card="3" data-team-sound="team-editor" aria-label="Zunair Shah, Video Editor">
+            <span class="team-connector" aria-hidden="true"></span>
+            <div class="pcard-video">
+              <img src="/media/team/video-editor-zunair-shah.png" alt="Zunair Shah, Video Editor at Expidra" width="1122" height="1402" loading="lazy" decoding="async" />
+            </div>
+            <div class="team-callout">
+              <span class="callout-icon" data-fa="film" aria-hidden="true"></span>
+              <div><p class="pcard-role">Video Editor</p><h3 class="pcard-name">Zunair</h3></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · SELECTED PARTNERSHIPS -->
+    <section class="scene scene-partners" id="partners" data-scene="partners">
+      <div class="scene-inner wide partners-inner">
+        <div class="partners-heading">
+          <p class="kicker">Selected partnerships</p>
+          <h2 class="h2">Built together.<br /><span class="grad">Made to move.</span></h2>
+          <p class="lead">A selection of brands that trusted Expidra with ideas, campaigns, and growth.</p>
+        </div>
+
+        <div class="partner-belts" aria-label="Selected Expidra clients" data-portfolio-belts></div>
+      </div>
+    </section>
+
+    <!-- 8 · WHY EXPIDRA -->
+    <section class="scene scene-why" id="why" data-scene="why">
+      <div class="scene-inner">
+        <p class="kicker">Our values</p>
+        <h2 class="h2 h2-tight">Strong ideas. Clear decisions.<br /><span class="grad">Work that holds up.</span></h2>
+        <div class="brainmap" id="brainmap">
+          <svg class="brain-svg brain-svg-desktop" viewBox="0 0 1000 430" fill="none" aria-hidden="true">
+            <path class="br-base" d="M 500 215 C 430 220, 300 170, 190 95" />
+            <path class="br-base" d="M 500 215 C 570 220, 700 170, 810 95" />
+            <path class="br-base" d="M 500 215 C 430 210, 300 260, 190 340" />
+            <path class="br-base" d="M 500 215 C 570 210, 700 260, 810 340" />
+            <path class="br-glow" data-branch="0" pathLength="100" style="stroke:#e24bbf" d="M 500 215 C 430 220, 300 170, 190 95" />
+            <path class="br-glow" data-branch="1" pathLength="100" style="stroke:#8b5cf6" d="M 500 215 C 570 220, 700 170, 810 95" />
+            <path class="br-glow" data-branch="2" pathLength="100" style="stroke:#4f9fe8" d="M 500 215 C 430 210, 300 260, 190 340" />
+            <path class="br-glow" data-branch="3" pathLength="100" style="stroke:#22c8f5" d="M 500 215 C 570 210, 700 260, 810 340" />
+          </svg>
+          <svg class="brain-svg brain-svg-mobile" viewBox="0 0 1000 700" fill="none" aria-hidden="true">
+            <path class="br-base" d="M 410 205 C 370 225, 305 242, 250 260" />
+            <path class="br-base" d="M 590 205 C 630 225, 695 242, 750 260" />
+            <path class="br-base" d="M 480 205 C 475 320, 480 420, 250 480" />
+            <path class="br-base" d="M 520 205 C 525 320, 520 420, 750 480" />
+            <path class="br-glow" data-branch="0" pathLength="100" style="stroke:#e24bbf" d="M 410 205 C 370 225, 305 242, 250 260" />
+            <path class="br-glow" data-branch="1" pathLength="100" style="stroke:#8b5cf6" d="M 590 205 C 630 225, 695 242, 750 260" />
+            <path class="br-glow" data-branch="2" pathLength="100" style="stroke:#4f9fe8" d="M 480 205 C 475 320, 480 420, 250 480" />
+            <path class="br-glow" data-branch="3" pathLength="100" style="stroke:#22c8f5" d="M 520 205 C 525 320, 520 420, 750 480" />
+          </svg>
+          <figure class="bhub values-hub" id="bhub" aria-label="The Expidra team working together">
+            <span class="values-media-shell">
+              <img
+                src="/media/values-expidra-team.webp"
+                alt="Four Expidra team members collaborating around laptops"
+                width="1200"
+                height="675"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <span class="values-workflow-signals" aria-hidden="true">
+              <span class="values-flow values-flow--idea">
+                <i data-fa="idea"></i>
+                <span><strong>Idea aligned</strong><small>Brief to concept</small></span>
+              </span>
+              <span class="values-flow values-flow--board">
+                <i data-fa="palette"></i>
+                <span><strong>Visual board</strong><small>Direction selected</small></span>
+              </span>
+              <span class="values-flow values-flow--frame">
+                <img src="/media/values-expidra-team.webp" alt="" width="72" height="42" />
+                <span><strong>Frame 03</strong><small>16:9 in review</small></span>
+              </span>
+              <span class="values-flow values-flow--ready">
+                <i data-fa="check"></i>
+                <span><strong>Production ready</strong><small>One working team</small></span>
+              </span>
+            </span>
+          </figure>
+          <article class="bcard bc1" style="--pc:#e24bbf" data-b="0">
+            <span class="bglyph" data-fa="idea" aria-hidden="true"></span>
+            <h3>Creativity</h3>
+            <p>We look for the idea people remember, not the effect everyone is already using.</p>
+          </article>
+          <article class="bcard bc2" style="--pc:#8b5cf6" data-b="1">
+            <span class="bglyph" data-fa="scale" aria-hidden="true"></span>
+            <h3>Scalability</h3>
+            <p>When something works, we turn it into a process your team can repeat and improve.</p>
+          </article>
+          <article class="bcard bc3" style="--pc:#4f9fe8" data-b="2">
+            <span class="bglyph" data-fa="shield" aria-hidden="true"></span>
+            <h3>Reliability</h3>
+            <p>Clear owners, realistic timelines, and regular updates from brief to delivery.</p>
+          </article>
+          <article class="bcard bc4" style="--pc:#22c8f5" data-b="3">
+            <span class="bglyph" data-fa="handshake" aria-hidden="true"></span>
+            <h3>Trust</h3>
+            <p>Direct communication, honest recommendations, and no black boxes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · WORK TOGETHER -->
+    <section class="scene scene-together" id="project-brief" data-scene="together">
+      <div class="scene-inner">
+        <p class="kicker">Start a conversation</p>
+        <h2 class="reel-title">Let’s build what your brand <span class="grad">needs next.</span></h2>
+        <form class="make-card" id="makeForm">
+          <div class="form-grid">
+            <label class="field"><span>Your name</span><input id="mfName" class="mf" type="text" placeholder="Full name" autocomplete="name" required /></label>
+            <label class="field"><span>Email address</span><input id="mfEmail" class="mf" type="email" placeholder="you@company.com" autocomplete="email" required /></label>
+            <label class="field"><span>Phone <em>optional</em></span><input id="mfPhone" class="mf" type="tel" placeholder="+92 ..." autocomplete="tel" /></label>
+            <label class="field field-wide"><span>Project brief</span><textarea id="mfAbout" class="mf mf-area" rows="3" placeholder="What are you building, and what outcome matters most?" required></textarea></label>
+          </div>
+          <p class="make-interest">What can we help with? <span>Select one or more.</span></p>
+          <div class="mf-chips" id="mfChips">
+            <button type="button" class="chip">AI Agents &amp; Automation</button>
+            <button type="button" class="chip">Content Systems</button>
+            <button type="button" class="chip">Paid Ads &amp; Growth</button>
+            <button type="button" class="chip">Websites &amp; Landing Pages</button>
+            <button type="button" class="chip">YouTube Automation</button>
+            <button type="button" class="chip">High End Commercials</button>
+          </div>
+          <div class="form-action">
+            <button type="submit" class="btn btn-primary mf-send" data-magnetic><span>Continue in email</span><i class="btn-glow"></i></button>
+            <p class="form-note">Your email app will open with the details ready for you to review and send.</p>
+          </div>
+          <p class="form-status" id="formStatus" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- 10 · FINAL CTA -->
+    <section class="scene scene-cta" id="contact" data-scene="cta">
+      <div class="scene-inner narrow">
+        <video class="scene-video cta-video" data-src="/media/clip-hero.mp4" muted loop playsinline></video>
+        <p class="kicker">Creative direction · Connected systems · Human judgment</p>
+        <h2 class="cta-title">Let’s make the next move <span class="grad">count.</span></h2>
+        <p class="lead">Tell us what needs to change. We’ll bring the right mix of strategy, craft, and technology.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" data-magnetic href="mailto:hello@expidra.com?subject=Project%20conversation"><span>Email Expidra</span><i class="btn-glow"></i></a>
+          <a class="btn btn-ghost" data-magnetic href="#project-brief" data-goto="0.865"><span>Prepare a project brief</span></a>
+        </div>
+        <div class="cta-dash">
+          <div class="dash-item">Content systems</div>
+          <div class="dash-item">Campaign direction</div>
+          <div class="dash-item">Web experiences</div>
+          <div class="dash-item">AI automation</div>
+        </div>
+      </div>
+      <footer class="footer">
+          <div class="footer-grid">
+            <div class="footer-brand">
+              <img src="/media/expidra-logo.png" alt="Expidra" class="footer-logo" />
+              <p class="footer-tag">Smarter content. Strong systems.</p>
+            </div>
+            <nav class="footer-col">
+              <h4>Explore</h4>
+              <a href="#" data-goto="0">Enter</a>
+              <a href="#services" data-goto="0.27">Services</a>
+              <a href="#process" data-goto="0.48">Process</a>
+              <a href="#team" data-goto="0.59">Team</a>
+              <a href="#partners" data-goto="0.69">Partners</a>
+              <a href="#project-brief" data-goto="0.865">Work Together</a>
+            </nav>
+            <nav class="footer-col">
+              <h4>Systems</h4>
+              <span>AI Agents &amp; Automation</span>
+              <span>Content &amp; Social</span>
+              <span>Paid Ads &amp; Growth</span>
+              <span>Websites &amp; YouTube</span>
+              <span>Commercials &amp; Production</span>
+            </nav>
+            <nav class="footer-col">
+              <h4>Contact</h4>
+              <a href="mailto:hello@expidra.com">hello@expidra.com</a>
+              <a href="https://expidra.com" target="_blank" rel="noopener">expidra.com</a>
+              <a href="https://instagram.com/expidra" target="_blank" rel="noopener">@expidra</a>
+            </nav>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2026 Expidra. All rights reserved.</span>
+            <span class="foot-sep">·</span>
+            <span>Strategy, creative, and technology under one roof.</span>
+          </div>
+        </footer>
+    </section>
+
+  </main>
+
+  <!-- scroll driver -->
+  <div class="scroll-space" id="scrollSpace" aria-hidden="true"></div>
+
+  <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha384-fgGyf7Mo7DURSOMnOy7ed+dkq5Job205Gnzu6QIg0BOHKaqt4D76Dt8VlDCzcMHV" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
